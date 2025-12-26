@@ -96,10 +96,7 @@ function analyzeSalesData(data, options) {
         // Количество продаж (количество чеков)
         seller.sales_count += 1;
 
-        // Выручка продавца — выручка чека с учётом скидки 
-        seller.revenue += (record.total_amount - record.total_discount);
-
-        // Прибыль и товары считаем по позициям чека
+        // Прибыль и выручку считаем по позициям чека
         record.items.forEach(item => {
             const product = productIndex[item.sku];
             if (!product) return;
@@ -107,13 +104,13 @@ function analyzeSalesData(data, options) {
             // Себестоимость товара
             const cost = product.purchase_price * item.quantity;
 
-            // Выручка по позиции 
+            // Выручка по позиции (с учётом скидки)
             const revenueItem = calculateRevenue(item, product);
 
-            // Прибыль по позиции
+            seller.revenue += revenueItem;
+
             const profitItem = revenueItem - cost;
 
-            // Накопление прибыли продавца
             seller.profit += profitItem;
 
             // Учёт количества проданных товаров (в штуках)
